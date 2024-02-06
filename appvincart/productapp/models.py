@@ -26,7 +26,7 @@ class Product(models.Model):
     Color = models.CharField(max_length = 20)
     Description = models.TextField(blank=True, max_length=500)
     Rating = models.IntegerField(choices = Rating_Choices)
-    # Arrival = models.DateTimeField(auto_now=True)
+    Arrival = models.DateTimeField(default=datetime.now().date()) #django.utils.timezone.now
     
     def save(self, *args, **kwargs):
         # Updating stock_status based on quantity
@@ -41,26 +41,33 @@ class Product(models.Model):
         return self.Name
     
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    products = models.ManyToManyField(Product)
+    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    products_id = models.ManyToManyField(Product)
     Quantity = models.PositiveIntegerField(default = 1)
     
     # Product.Quantity = Product.Quantity - Quantity----- to be done in a view or so when the product is done ordering 
     
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    order = models.OneToOneField(Cart, on_delete = models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    order_id = models.OneToOneField(Cart, on_delete = models.CASCADE)
     Total_amount = models.DecimalField(max_digits=10,decimal_places=2, default =0)
-    # Estimated_delivery_date = models.DateField(blank = True)
+    Estimated_delivery_date = models.DateField(blank = True, default=(datetime.now().date()+timedelta(6)))
     
     def save(self, *args, **kwargs):
-        # today=datetime.now().date()
-        # random_days= random.randint(2,5)
-        # self.Estimated_delivery_date = today + timedelta(days=random_days)
+        if not self.Estimated_delivery_date:
+            today=datetime.now().date()
+            random_days= random.randint(2,5)
+            self.Estimated_delivery_date = today + timedelta(days=random_days)
         # for o in self.order.products.Price:  # it can't be done as product inside cart is not a single product but in a many to many relation field rather than queryset, so we need to iterate ovr it to get data
         total = sum(product.Price for product in self.order.product.all())
         self.Total_amount = total    
         super().save(*args, **kwargs)
+        
+# -- todo - add quantity in order
+# -- for rating make a seperate table for users to rate the product.
+# to do rating , feedback can be asked from user.
+
+# module vise work
         
     
     
