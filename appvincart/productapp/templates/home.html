@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{%block content%}
+
+<h1>Products : </h1>
+<ul>
+{% for product in object_list%}
+<li>
+    <img src= "{{product.image.urls}}" alt="{{product.Name}}"><br>
+    <a href="{% url 'productdetail' product.pk %}">
+{{product.Name}}</a>
+- {{product.Price}}<br>
+{{product.Stock_Status}}<br>
+<br></li>
+{%endfor%}
+</ul>
+{%endblock%}
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    <h1>Products:</h1>
+    <ul>
+        {% for product in object_list %}
+            <li>
+                <img src="{{ product.Image.url }}" alt="{{ product.Name }} Image"><br>
+                <a href="{% url 'productdetail' product.pk %}">{{ product.Name }}</a> - ${{ product.Price }}<br>
+                Stock Status: {{ product.Stock_Status }}<br>
+                <br>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %} {% endcomment %}
+

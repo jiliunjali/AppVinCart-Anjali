@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{%block content%}
+
+<h1> {{product.Name}}</h1><br>
+<small> Stock_Status : {{product.Stock_Status}}</small><br>
+<small> Price: {{product.Price}}</small><br>
+<hr>
+{{product.Description}}
+<br>
+<br/>
+<br/>
+<a href="{% url 'home'%}" class="btn btn-secondary">Back</a> 
+{%endblock%}

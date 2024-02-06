@@ -1,0 +1,21 @@
+{% comment %}
+-- take input for login and on correct login id and password redirect to home page from home app
+-- if email or password is incorrect give warning, if the email is new ask for neew registration
+-- if person click on forget password , 
+then after taken entry for access to change the password, 
+redirect to reset password page and then at the end again at the login page.
+{% endcomment %}
+
+<h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% comment %}  # all of this can be create via html too, but we insert our form here to provide backend support
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Login"> 
+        {% endcomment %}
+        {{login_form.as_p}}
+        <input type="submit" value="Login">
+
+    </form>
+</h2>
