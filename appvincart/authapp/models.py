@@ -21,7 +21,7 @@ class UserManager(BaseUserManager):
             first_name = first_name,
         )
         
-        user.set_password(password) # it will hash our password to save it
+        user.set_password(password) # it will hash our password to save it # TODO problem in it's hashing to correct as i can't see it in admin(problem is only for user not for superuser)
         user.save(using=self._db)
         return user
     
@@ -44,30 +44,41 @@ class User(AbstractBaseUser):
     #     if not password_regex.match(value):
     #         raise Exception("Password must be at least 8 characters long and contain only alphanumeric characters, '@', or '_'")
 
-    First_Name = models.CharField(max_length=50, null=False)
-    Last_Name = models.CharField(max_length=100)
-    Email = models.EmailField(max_length=100, null=False, unique=True)
-    Phone = models.CharField(max_length= 15)
-    Address = models.CharField(max_length=200)
-    Gender = models.CharField(max_length=1, choices=gender_choices)
+    first_name = models.CharField(max_length=50, null=False)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100, null=False, unique=True)
+    phone = models.CharField(max_length= 15)
+    address = models.CharField(max_length=200)
+    gender = models.CharField(max_length=1, choices=gender_choices)
     # Password = models.CharField(max_length=50,validators=[validate_password])
-    Registered_at = models.DateTimeField(auto_now_add = True)
+    registered_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     
-    USERNAME_FIELD = 'Email'
-    REQUIRED_FIELDS = ['First_Name'] #['First_Name','Password']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name'] #['First_Name','Password']
     
-    obj = UserManager()
+    objects = UserManager()
     
     def __str__(self):
-        return self.Email
+        return self.email
+    
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
     
     def has_module_perms(self, app_label):
         "Does user have permissions to view the app 'app_label'?"
         return True
+    
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
     
     
     

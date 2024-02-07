@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'appvincart.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'appvin',   # BASE_DIR / 'meta',
+        'NAME': 'appvincart',   # BASE_DIR / 'meta',
         'HOST':'127.0.0.1',
         'PORT': '3306',
         'USER': 'root',
@@ -95,10 +95,14 @@ DATABASES = {
 #added by me: for jwt authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Replace with JWTAuthentication
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': [
+        # 'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer',
+    ]
 }
 
 
@@ -146,7 +150,7 @@ MEDIA_ROOT=BASE_DIR/"images"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+AUTH_USER_MODEL = 'authapp.User'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
