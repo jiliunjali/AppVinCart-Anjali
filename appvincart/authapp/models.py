@@ -55,7 +55,7 @@ class User(AbstractBaseUser):
     updated_at = models.DateTimeField(auto_now = True)
     
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False) #TODO :role table with id here
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name'] #['First_Name','Password']

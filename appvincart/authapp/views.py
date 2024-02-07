@@ -43,7 +43,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from .serializers import SendPasswordResetEmailSerializer, UserLoginSerializer, UserProfileSerializer, UserRegistrationSerializer, UserChangePasswordSerializer
+from .serializers import SendPasswordResetEmailSerializer, UserLoginSerializer, UserPasswordResetSerializer, UserProfileSerializer, UserRegistrationSerializer, UserChangePasswordSerializer
 from django.contrib.auth  import authenticate
 from .renderers import UserRenderer
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -113,11 +113,22 @@ class UserChangePasswordView(APIView):
             return Response({'msg':'Password Changed Successfully'}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     
+# for forget password
+
 class SendPasswordResetEmailView(APIView):
     renderer_classes = [UserRenderer]
     def post(self, request, format=None):
         serializer = SendPasswordResetEmailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            return Response({'msg':'Password reset link is sent. please check your email'}, status = status.HTTP_200_Ok)
+            return Response({'msg':'Password reset link is sent. please check your email'}, status = status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+#for updating the password passed by user after resetting forget password
+class UserPasswordResetView(APIView):
+    renderer_classes = [UserRenderer]
+    def post(self, request, uid, token, format=None):
+        serializer = UserPasswordResetSerializer(data = request.data, context={'uid':uid,'token':token })
+        if serializer.is_valid(raise_exception =True):
+            return Response({'msg':'Password is successfully reseted'}, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
