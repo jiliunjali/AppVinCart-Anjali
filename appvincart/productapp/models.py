@@ -1,73 +1,33 @@
 from django.db import models
 from authapp.models import User
-
-from datetime import datetime, timedelta
-import random
-
-
-
 # Create your models here.
 
-Rating_Choices = (
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-    (4, '4'),
-    (5, '5'),
-)
+
 
 # especially use for product detail view
 class Product(models.Model):
-    Name = models.CharField(max_length=50, null=False)
-    Image = models.ImageField(upload_to='images/',null=True, blank=True) # how to upload and save them
-    Price = models.DecimalField(max_digits=10,decimal_places=2)
-    Quantity = models.IntegerField()
-    Stock_Status = models.CharField(default='OUT_OF_STOCK', max_length=12)
-    Color = models.CharField(max_length = 20)
-    Description = models.TextField(blank=True, max_length=500)
-    Rating = models.IntegerField(choices = Rating_Choices)
-    Arrival = models.DateTimeField(default=datetime.now().date()) #django.utils.timezone.now
+    name = models.CharField(max_length=50, null=False)
+    image = models.ImageField(upload_to='images/',null=True, blank=True) # how to upload and save them
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+    quantity = models.IntegerField()
+    stock_status = models.CharField(default='OUT_OF_STOCK', max_length=12)
+    color = models.CharField(max_length = 20)
+    description = models.TextField(blank=True, max_length=500)
+    # feedbacks = models.ManyToManyField(FeedBack, blank=True, null=True)
+    # Arrival = models.DateTimeField(default=datetime.now().date()) #django.utils.timezone.now  last entered unnique item will get title of new arrival
     
     def save(self, *args, **kwargs):
         # Updating stock_status based on quantity
-        if self.Quantity > 0:
-            self.Stock_Status = 'IN_STOCK'
+        if self.quantity > 0:
+            self.stock_status = 'IN_STOCK'
         else:
-            self.Stock_Status = 'OUT_OF_STOCK'
-        
+            self.stock_status = 'OUT_OF_STOCK'
+
         super().save(*args, **kwargs)
         
     def __str__(self):
-        return self.Name
+        return self.name
     
-class Cart(models.Model):
-    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
-    products_id = models.ManyToManyField(Product)
-    Quantity = models.PositiveIntegerField(default = 1)
-    
-    # Product.Quantity = Product.Quantity - Quantity----- to be done in a view or so when the product is done ordering 
-    
-class Order(models.Model):
-    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
-    order_id = models.OneToOneField(Cart, on_delete = models.CASCADE)
-    Total_amount = models.DecimalField(max_digits=10,decimal_places=2, default =0)
-    Estimated_delivery_date = models.DateField(blank = True, default=(datetime.now().date()+timedelta(6)))
-    
-    def save(self, *args, **kwargs):
-        if not self.Estimated_delivery_date:
-            today=datetime.now().date()
-            random_days= random.randint(2,5)
-            self.Estimated_delivery_date = today + timedelta(days=random_days)
-        # for o in self.order.products.Price:  # it can't be done as product inside cart is not a single product but in a many to many relation field rather than queryset, so we need to iterate ovr it to get data
-        total = sum(product.Price for product in self.order.product.all())
-        self.Total_amount = total    
-        super().save(*args, **kwargs)
-        
-# -- todo - add quantity in order
-# -- for rating make a seperate table for users to rate the product.
-# to do rating , feedback can be asked from user.
-
-# module vise work
         
     
     

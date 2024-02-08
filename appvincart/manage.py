@@ -2,9 +2,10 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+import dotenv # by me
 
 def main():
+    dotenv.read_dotenv() # by me , for email configuration
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appvincart.settings')
     try:

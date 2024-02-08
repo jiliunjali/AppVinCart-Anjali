@@ -1,17 +1,17 @@
-<h2>
-    <form action="" method="post">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration Form</title>
+</head>
+<body>
+    <form method="post">
         {% csrf_token %}
-        {% comment %}  # all of this can be create via html too, but we insert our form here to provide backend support
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Login"> 
-        {% endcomment %}
-        {{reg_form.as_p}}
-        <input type="submit" value="Register">
-    </br>
-</br>
-        <a href="{% url 'login' %}" class="btn btn-secondary" >Login</a>
+        {{ reg_form.as_p }}
+        <button type="submit">Submit</button>
+        <br><br>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
     </form>
-</h2>
+</body>
+</html>
 
-<!-- TODO: from here we want to redirect to login page to login on the site as it's user now.>

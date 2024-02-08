@@ -11,11 +11,5 @@ urlpatterns=[
     path('profile/', UserProfileView.as_view() ,name='profile'),
     path('changepassword/', UserChangePasswordView.as_view() ,name='changepassword'),
     path('resetforgotpassword/',SendPasswordResetEmailView.as_view(), name='reset_forgot_password'),
-    path('resetpassword/<uid>/<token>/',UserPasswordResetView.as_view(), name='reset_password'),
-    
-    
-    
-    
-    
-
+    path('resetpassword/<uid>/<token>/',UserPasswordResetView.as_view(), name='reset_password'), # adding slash at the ed of writting this url is really important, although automatically adds a slash at the end ; but that's troublesome too.
 ]

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authapp',
     'productapp',
+    'cartapp',
+    'orderapp',
     # 'corsheaders', #in order to avoid a certain typ of error that is encountered when connecting beckend with forntend
     'rest_framework',
     'rest_framework_simplejwt',
@@ -140,17 +143,29 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = 'static/'
 MEDIA_URL="static/"
 MEDIA_URL="/images/"
-MEDIA_ROOT=BASE_DIR/"images"
+MEDIA_ROOT= BASE_DIR/"images/images"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'authapp.User'
+AUTH_USER_MODEL = 'authapp.User'  # added by me , so that foreign key constraint error won't occur
+
+#configuration for sending email for password reset (part of password forgot mechanism)
+EMAIL_BACKEND= "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_PORT = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_USE_TLS = True
+
+
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
@@ -180,6 +195,8 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
 
 }
+
+PASSWORD_RESET_TIMEOUT=900  # 900 sec-> 15 min. means after 15 mins the token generated for password reset will expire automatically.
 
 # CORS_ALLOWED_ORIGINS =[
 #     "http://localhost:8080",

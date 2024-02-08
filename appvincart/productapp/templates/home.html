@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 {%block content%}
-
+<a href="{% url 'home' %}?sort=new_arrival">Sort by New Arrival</a>
+<a href="{% url 'home' %}?sort=price">Sort by Price</a>
+<hr>
 <h1>Products : </h1>
-<ul>
+
 {% for product in object_list%}
-<li>
-    <img src= "{{product.image.urls}}" alt="{{product.Name}}"><br>
+    <img src= "{{product.image.urls}}" alt="{{product.name}}"><br>
     <a href="{% url 'productdetail' product.pk %}">
-{{product.Name}}</a>
-- {{product.Price}}<br>
-{{product.Stock_Status}}<br>
-<br></li>
+{{product.name}}</a>
+- {{product.price}}<br>
+{{product.stock_status}}<br>
+<br>
 {%endfor%}
-</ul>
+
 {%endblock%}
 
 {% comment %} {% extends 'base.html' %}

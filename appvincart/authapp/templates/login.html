@@ -9,11 +9,7 @@ redirect to reset password page and then at the end again at the login page.
 <h2>
     <form action="" method="post">
         {% csrf_token %}
-        {% comment %}  # all of this can be create via html too, but we insert our form here to provide backend support
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Login"> 
-        {% endcomment %}
+
         {{login_form.as_p}}
         <input type="submit" value="Login">
 
