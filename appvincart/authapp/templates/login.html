@@ -6,7 +6,7 @@ then after taken entry for access to change the password,
 redirect to reset password page and then at the end again at the login page.
 {% endcomment %}
 
-<h2>
+{% comment %} <h2>
     <form action="" method="post">
         {% csrf_token %}
 
@@ -14,4 +14,135 @@ redirect to reset password page and then at the end again at the login page.
         <input type="submit" value="Login">
 
     </form>
-</h2>
+</h2> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #loginForm {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            box-sizing: border-box;
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <form id="loginForm" method="post">
+        {% csrf_token %}
+        
+        <h1>User Login</h1>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        
+        <button type="submit">Login</button>
+
+        <div class="form-footer">
+            <p>Don't have an account? <a href="{% url 'register'  %}">Register</a></p>
+            <p>Forgot your password? <a href="{% url 'reset_forgot_password'  %}">Forgot Password</a></p>
+            <p>Back to <a href="{% url 'home'  %}">Home</a></p>
+        </div>
+    </form>
+    <script>
+        function handleLogin() {
+            var formData = new FormData(document.getElementById("loginForm"));
+            fetch("/auth/login/", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.token) {
+                    // Redirect user to home page upon successful login
+                    window.location.href = "{% url 'home'  %}";
+                } else if (data.errors && data.errors.non_field_errors) {
+                    // Display error message for unsuccessful login
+                    document.getElementById("loginError").innerText = data.errors.non_field_errors[0];
+                } else {
+                    console.error("Unexpected response from server");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+            return false; // Prevent default form submission
+        }
+    </script>
+    
+    
+    
+</body>
+</html>

@@ -13,8 +13,7 @@ class Product(models.Model):
     stock_status = models.CharField(default='OUT_OF_STOCK', max_length=12)
     color = models.CharField(max_length = 20)
     description = models.TextField(blank=True, max_length=500)
-    # feedbacks = models.ManyToManyField(FeedBack, blank=True, null=True)
-    # Arrival = models.DateTimeField(default=datetime.now().date()) #django.utils.timezone.now  last entered unnique item will get title of new arrival
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     
     def save(self, *args, **kwargs):
         # Updating stock_status based on quantity

@@ -16,5 +16,7 @@ class UserRenderer(renderers.JSONRenderer):
     
 class SuccessRenderer(renderers.JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context =None):
-        response_data = {"success" : data}
+        response_data = {"success" : data}  #        response_data = {"success" : data.get("message", "")}
+        # if "redirect_url" in data:
+        #     response_data["redirect_url"] = data["redirect_url"]
         return response_data

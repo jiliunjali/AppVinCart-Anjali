@@ -143,8 +143,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / "static"
-STATIC_URL = 'static/'
+# STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = '/static/'
 MEDIA_URL="static/"
 MEDIA_URL="/images/"
 MEDIA_ROOT= BASE_DIR/"images/images"
@@ -157,12 +157,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authapp.User'  # added by me , so that foreign key constraint error won't occur
 
 #configuration for sending email for password reset (part of password forgot mechanism)
-EMAIL_BACKEND= "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_PORT = "smtp.gmail.com"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 EMAIL_USE_TLS = True
+
 
 
 
@@ -202,3 +203,7 @@ PASSWORD_RESET_TIMEOUT=900  # 900 sec-> 15 min. means after 15 mins the token ge
 #     "http://localhost:8080",
 #     "http://127.0.0.1:8080",
 # ]
+
+STATICFILES_DIRS=[
+    BASE_DIR/"static",
+    ]

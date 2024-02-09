@@ -1,3 +1,4 @@
+from audioop import reverse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -8,7 +9,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework_simplejwt.tokens import RefreshToken #for refresh token
 from rest_framework.permissions import IsAuthenticated
 
-# generating token manually - jwt token
+# generating token manually - jwt token # HS256 the algo used in jwt token by default
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
@@ -24,7 +25,7 @@ class UserRegisterationView(APIView):
     
     def get(self, request, format=None):
         reg_form = UserRegistrationSerializer()
-        return Response({'reg_form': reg_form}, template_name='registration.html')
+        return Response({'reg_form': reg_form}, template_name=self.template_name)
     
     # we use post as user will give data to register himself , from here the request's data will be send to serializer
     def post(self, request, format = None):
@@ -39,17 +40,20 @@ class UserRegisterationView(APIView):
 class UserLoginView(APIView):
     
     renderer_classes =[UserRenderer, SuccessRenderer, TemplateHTMLRenderer]
+    template_name = 'login.html'
     
     def get(self, request, format=None):
         login_form = UserLoginSerializer()
-        return Response({'login_form': login_form}, template_name='login.html')
+        return Response({'login_form': login_form}, template_name=self.template_name)
     
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
+        #for redirection to page with this url 
         if serializer.is_valid(raise_exception = True):
             email = serializer.data.get('email')
             password = serializer.data.get('password')
-            user=authenticate(email=email, password=password) # using these it will authenticate and check if there any user with it or not
+            # using these it will authenticate and check if there any user with it or not
+            user=authenticate(email=email, password=password) 
             if user is not None:
                 token = get_tokens_for_user(user)
                 return Response({'token':token ,'msg':'Login Success'}, status = status.HTTP_201_CREATED)
@@ -69,17 +73,20 @@ class UserProfileView(APIView):
 
 #change_password requires token as it is done only after login and for login authentication is need to be done
 class UserChangePasswordView(APIView):
+    
     renderer_classes = [UserRenderer, SuccessRenderer, TemplateHTMLRenderer]
     permission_classes = [IsAuthenticated] # to be authenticated and authorized , the token need with the request data
+    template_name = 'changepassword.html'
+    
+    def get(self, request, format=None):
+        change_password_form = UserChangePasswordView()
+        return Response({'login_form': change_password_form}, template_name=self.template_name)
+    
     def post(self, request, format =None):
         serializer = UserChangePasswordSerializer(data=request.data, context = {'user':request.user})
         if serializer.is_valid(raise_exception =True):
             return Response({'msg':'Password Changed Successfully'}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    
-    def get(self, request, format=None):
-        changepassword_form = UserChangePasswordView()
-        return Response({'changepassword_form': changepassword_form}, template_name='change_password.html')
     
 # for forget password
 class SendPasswordResetEmailView(APIView):
@@ -100,3 +107,13 @@ class UserPasswordResetView(APIView):
             return Response({'msg':'Password is successfully reseted'}, status = status.HTTP_200_OK)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
+class UserLogoutView(APIView):
+    def post(self, request, format = None):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"success": "User logged out successfully."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    

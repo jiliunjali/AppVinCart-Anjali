@@ -1,17 +1,362 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form id="registrationForm" method="post">
+        {% csrf_token %}
+        
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ reg_form.first_name.value }}" required><br><br>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ reg_form.last_name.value }}" required><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ reg_form.email.value }}" required><br><br>
+        
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" value="{{ reg_form.phone.value }}" required><br><br>
+        
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" value="{{ reg_form.address.value }}" required><br><br>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="M" {% if reg_form.gender.value == 'M' %} selected {% endif %}>Male</option>
+            <option value="F" {% if reg_form.gender.value == 'F' %} selected {% endif %}>Female</option>
+            <option value="O" {% if reg_form.gender.value == 'O' %} selected {% endif %}>Other</option>
+        </select><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <label for="password2">Confirm Password:</label>
+        <input type="password" id="password2" name="password2" required><br><br>
+        
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html> {% endcomment %}
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #registrationForm {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select {
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <form id="registrationForm" method="post">
+        {% csrf_token %}
+        
+        <h1>User Registration</h1>
+        
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ reg_form.first_name.value }}" required>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ reg_form.last_name.value }}" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ reg_form.email.value }}" required>
+        
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" value="{{ reg_form.phone.value }}" required>
+        
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" value="{{ reg_form.address.value }}" required>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="M" {% if reg_form.gender.value == 'M' %} selected {% endif %}>Male</option>
+            <option value="F" {% if reg_form.gender.value == 'F' %} selected {% endif %}>Female</option>
+            <option value="O" {% if reg_form.gender.value == 'O' %} selected {% endif %}>Other</option>
+        </select>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <label for="password2">Confirm Password:</label>
+        <input type="password" id="password2" name="password2" required>
+        
+        <button type="submit">Register</button>
+
+        <div class="form-footer">
+            <p>Already have an account? <a href="/login">Login</a></p>
+            <p>Back to <a href="/">Home</a></p>
+        </div>
+    </form>
+</body>
+</html> {% endcomment %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Registration Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #registrationForm {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select {
+            width: 100%;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* Close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <form method="post">
+    <form id="registrationForm" method="post">
         {% csrf_token %}
-        {{ reg_form.as_p }}
-        <button type="submit">Submit</button>
-        <br><br>
-        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+        
+        <h1>User Registration</h1>
+        
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ reg_form.first_name.value }}" required>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ reg_form.last_name.value }}" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ reg_form.email.value }}" required>
+        
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" value="{{ reg_form.phone.value }}" required>
+        
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" value="{{ reg_form.address.value }}" required>
+        
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required class="form-control form-control-sm">
+            <option value="M" {% if reg_form.gender.value == 'M' %} selected {% endif %}>Male</option>
+            <option value="F" {% if reg_form.gender.value == 'F' %} selected {% endif %}>Female</option>
+            <option value="O" {% if reg_form.gender.value == 'O' %} selected {% endif %}>Other</option>
+        </select>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <label for="password2">Confirm Password:</label>
+        <input type="password" id="password2" name="password2" required>
+        
+        <button type="submit">Register</button>
+
+        <div class="form-footer">
+            <p>Already have an account? <a href="{% url 'login'  %}">Login</a></p>
+            <p>Back to <a href="{% url 'home'  %}">Home</a></p>
+        </div>
     </form>
+
+    <!-- Success message modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Registration successful!</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to show modal after successful registration
+        // Change this function to trigger the modal based on your actual implementation
+        function showSuccessModal() {
+            var modal = document.getElementById("successModal");
+            modal.style.display = "block";
+
+            // Close the modal when the close button is clicked
+            var closeBtn = document.getElementsByClassName("close")[0];
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+
+        // Call the showSuccessModal function when registration is successful
+        // This is just an example, you should call this function based on your actual implementation
+        // For example, after receiving a success response from the server
+        // showSuccessModal();
+    </script>
 </body>
 </html>
+
+
 

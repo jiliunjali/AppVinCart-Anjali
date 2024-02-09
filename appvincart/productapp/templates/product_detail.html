@@ -1,13 +1,73 @@
 {% extends 'base.html' %}
-{%block content%}
 
-<h1> {{product.Name}}</h1><br>
-<small> Stock_Status : {{product.stock_status}}</small><br>
-<small> Price: {{product.price}}</small><br>
-<hr>
-{{product.description}}
-<br>
-<br/>
-<br/>
-<a href="{% url 'home'%}" class="btn btn-secondary">Back</a> 
-{%endblock%}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid" data-toggle="modal" data-target="#productModal">
+        </div>
+        <div class="col-md-8">
+            <h1>{{ product.name }}</h1>
+            <p><small>Stock Status: {{ product.stock_status }}</small></p>
+            <p><small>Price: {{ product.price }}</small></p>
+            <p><small>Quantity: {{ product.quantity }}</small></p>
+            <p><small>Color: {{ product.color }}</small></p>
+            {% if product.discount %}
+                <p><small>Upto {{ product.discount }}% Off</small></p>
+            {% else %}
+                <p><small>No Discount Applicable</small></p>
+            {% endif %}
+            <hr>
+            <p>{{ product.description }}</p>
+            <a href="{% url 'addtocart' %}" class="btn btn-success">Add to Cart</a>
+            <a href="#" class="btn btn-success">Buy Now</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">{{ product.name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <h1>{{ product.name }}</h1>
+            <p><small>Stock Status: {{ product.stock_status }}</small></p>
+            <p><small>Price: {{ product.price }}</small></p>
+            <p><small>Quantity: {{ product.quantity }}</small></p>
+            <p><small>Color: {{ product.color }}</small></p>
+            <hr>
+            <p>{{ product.description }}</p>
+            <a href="#" class="btn btn-success">Add to Cart</a>
+            <a href="#" class="btn btn-success">Buy Now</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}
+

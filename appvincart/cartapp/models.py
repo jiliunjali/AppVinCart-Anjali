@@ -18,4 +18,11 @@ class Cart(models.Model):
                 if product.quantity >= self.quantity:
                     product.quantity -= self.quantity
                     product.save()
+                    
+class SaveForLater(models.Model):
+    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    products_id = models.ManyToManyField(Product)
+    quantity = models.PositiveIntegerField(default = 1)
+
+
     

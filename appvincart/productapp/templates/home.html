@@ -1,34 +1,41 @@
 {% extends 'base.html' %}
-{%block content%}
-<a href="{% url 'home' %}?sort=new_arrival">Sort by New Arrival</a>
-<a href="{% url 'home' %}?sort=price">Sort by Price</a>
-<hr>
-<h1>Products : </h1>
-
-{% for product in object_list%}
-    <img src= "{{product.image.urls}}" alt="{{product.name}}"><br>
-    <a href="{% url 'productdetail' product.pk %}">
-{{product.name}}</a>
-- {{product.price}}<br>
-{{product.stock_status}}<br>
-<br>
-{%endfor%}
-
-{%endblock%}
-
-{% comment %} {% extends 'base.html' %}
-
 {% block content %}
-    <h1>Products:</h1>
-    <ul>
-        {% for product in object_list %}
-            <li>
-                <img src="{{ product.Image.url }}" alt="{{ product.Name }} Image"><br>
-                <a href="{% url 'productdetail' product.pk %}">{{ product.Name }}</a> - ${{ product.Price }}<br>
-                Stock Status: {{ product.Stock_Status }}<br>
-                <br>
-            </li>
-        {% endfor %}
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        Sort
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+        <li><a class="dropdown-item" href="{% url 'home' %}?sort=from_oldest">Sort by First Arrival</a></li>
+        <li><a class="dropdown-item" href="{% url 'home' %}?sort=new_arrival">Sort by New Arrival</a></li>
+        <li><a class="dropdown-item" href="{% url 'home' %}?sort=price_max_to_low">Sort by Price - Max to Low</a></li>
+        <li><a class="dropdown-item" href="{% url 'home' %}?sort=price_low_to_max">Sort by Price - Low to Max</a></li>
     </ul>
-{% endblock %} {% endcomment %}
+</div>
+<hr>
+<hr>
+<h1>Products:</h1>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+    {% for product in products %}
+    <div class="col mb-4">
+        <div class="card">
+            <div style="height: 200px; overflow: hidden;">
+                <a href="{% url 'productdetail' product.pk %}">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 100%; width: auto;">
+                </a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'productdetail' product.pk %}">{{ product.name }}</a>
+                </h5>
+                <p class="card-text">Price: {{ product.price }}</p>
+                <p class="card-text">{{ product.stock_status }}</p>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
 
