@@ -19,11 +19,11 @@
             {% endif %}
             <hr>
             <p>{{ product.description }}</p>
-            <form method="post" action="{% url 'addtocart' product.id user_id  %}">
+            <form method="post" action="{% url 'add_to_cart' user_id product.id  %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success">Add to Cart</button>
             </form>
-            <a href="#" class="btn btn-success">Buy Now</a>
+            <a href="{% url 'add_product_to_order' user_id=request.user.id product_id=product.id  %}" class="btn btn-success">Buy Now</a>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </div>
     </div>

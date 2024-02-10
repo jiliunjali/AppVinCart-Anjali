@@ -7,36 +7,29 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1>Shopping Cart</h1>
+        <h1>Wish Cart</h1>
 
         {% if cart_empty %}
-            <p>Your cart is empty.</p>
+            <p>Your wishlist is empty.</p>
         {% else %}
-        <a href="{% url 'wishlist' user_id=request.user.id %}"><button>WishList</button></a>
-
             <div id="cart">
                 <h2>Cart Items</h2>
                 <ul>
                     {% for item in cart_items %}
                         <li>
                             <div>
-                                <span>{{ item.products.name }}</span> <!-- Changed from item.products_id.name to item.products.name -->
-                                <span>Quantity: {{ item.quantity }}</span>
-                                <span>Price: ${{ item.products.price }}</span> <!-- Changed from item.products_id.price to item.products.price -->
-                                <form method="post" action="{% url 'delete_from_cart' item.cart.user.id item.products.id %}"> <!-- Changed to pass cart and product IDs as arguments -->
+                                <span>{{ item.products_id.name }}</span> 
+                                <span>Price: ${{ item.products_id.price }}</span> 
+                                {% comment %} <form method="post" action="{% url 'delete_from_cart' user_id=request.user.id product_id=item.products_id.id %}"> <!-- Changed to pass cart and product IDs as arguments -->
                                     {% csrf_token %}
                                     <button type="submit">Delete</button>
-                                </form>
-                                <form method="post" action="{% url 'transfer_to_save_for_later' item.cart.user.id item.products.id %}"> <!-- Changed to pass user and product IDs as arguments -->
-                                    {% csrf_token %}
-                                    <button type="submit">Save for Later</button>
-                                </form>
+                                </form> {% endcomment %}
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
                 <a href="{% url 'home' %}"><button>Back</button></a>
-                <a href="#"><button>Buy Now</button></a>
+                {% comment %} <a href="{% url 'add_to_cart' user_id=request.user.id product_id=item.products_id.id  %}"><button>Add to Cart</button></a> {% endcomment %}
             </div>
         {% endif %}
     </div>

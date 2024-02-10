@@ -17,18 +17,18 @@ rating_choices = (
 # Create your models here.
 class Order(models.Model):
     user_id = models.ForeignKey(User, on_delete = models.CASCADE)
-    order_id = models.OneToOneField(Cart, on_delete = models.CASCADE)
-    Total_amount = models.DecimalField(max_digits=10,decimal_places=2, default =0)
+    cart = models.OneToOneField(Cart, on_delete = models.CASCADE)
+    total_amount = models.DecimalField(max_digits=10,decimal_places=2, default =0)
     estimated_delivery_date = models.DateField(blank = True, default=(datetime.now().date()+timedelta(6)))
     
     def save(self, *args, **kwargs):
-        if not self.Estimated_delivery_date:
+        if not self.estimated_delivery_date:
             today=datetime.now().date()
             random_days= random.randint(2,5)
             self.estimated_delivery_date = today + timedelta(days=random_days)
             
         # for o in self.order.products.Price:  # it can't be done as product inside cart is not a single product but in a many to many relation field rather than queryset, so we need to iterate ovr it to get data
-        total = sum(product.Price for product in self.order.product.all())
+        total = sum(item.products.price for item in self.cart.cart_items.all())
         self.Total_amount = total    
         super().save(*args, **kwargs)
         

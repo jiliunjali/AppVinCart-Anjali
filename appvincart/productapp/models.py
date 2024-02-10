@@ -1,5 +1,7 @@
 from django.db import models
-from authapp.models import User
+# from authapp.models import User
+from django.utils.text import slugify
+
 # Create your models here.
 
 
@@ -16,7 +18,6 @@ class Product(models.Model):
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     
     def save(self, *args, **kwargs):
-        # Updating stock_status based on quantity
         if self.quantity > 0:
             self.stock_status = 'IN_STOCK'
         else:

@@ -43,7 +43,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'cart:home' %}">
+            <a class="navbar-brand" href="{% url 'cart' user_id=request.user.id %}">
                 Shopping Cart
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,11 +52,11 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'cart:home' %}">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'cart:save_for_later' %}">Save for Later</a>
-                    </li>
+                    {% comment %} <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'transfer_to_save_for_later' user_id=request.user.id %}">Save for Later</a>
+                    </li> {% endcomment %}
                 </ul>
             </div>
         </div>
