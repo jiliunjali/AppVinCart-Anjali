@@ -100,10 +100,10 @@
             <div class="btn-group">
                 <a href="{% url 'cart' user_id=request.user.id  %}" class="btn btn-secondary">Back to Cart</a>
                 <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
-                {% comment %} <form method="post" action="{% url 'delete_order' order_id=orders.id %}">
+                <form method="post" action="#">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Delete Order</button>
-                </form> {% endcomment %}
+                </form>
                 <form method="post" action="#">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-success">Pay Order</button>

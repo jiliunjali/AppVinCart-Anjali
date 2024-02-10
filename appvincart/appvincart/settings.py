@@ -158,7 +158,7 @@ AUTH_USER_MODEL = 'authapp.User'  # added by me , so that foreign key constraint
 
 #configuration for sending email for password reset (part of password forgot mechanism)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.yopmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')

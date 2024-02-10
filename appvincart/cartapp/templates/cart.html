@@ -36,7 +36,7 @@
                     {% endfor %}
                 </ul>
                 <a href="{% url 'home' %}"><button>Back</button></a>
-                <a href="#"><button>Buy Now</button></a>
+                <a href="{% url 'add_cart_to_order' user_id=request.user.id %}"><button>Buy</button></a>
             </div>
         {% endif %}
     </div>

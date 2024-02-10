@@ -17,7 +17,7 @@ rating_choices = (
 # Create your models here.
 class Order(models.Model):
     user_id = models.ForeignKey(User, on_delete = models.CASCADE)
-    cart = models.OneToOneField(Cart, on_delete = models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete = models.CASCADE)
     total_amount = models.DecimalField(max_digits=10,decimal_places=2, default =0)
     estimated_delivery_date = models.DateField(blank = True, default=(datetime.now().date()+timedelta(6)))
     

@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
+from authapp.models import User
 
 from productapp.models import Product
 from .models import Order
@@ -25,48 +26,24 @@ class DisplayOrderContentsView(View):
         
         return render(request, 'order_contents.html', {'orders': orders, 'total_price': total_price})
 
-# class AddProductToOrderView(View):
-#     def post(self, request, *args, **kwargs):
-#         # Retrieve the product_id from URL kwargs
-#         product_id = kwargs.get('product_id')
-        
-#         # Create an instance of AddToCartView and call its post method to add the product to the cart
-#         add_to_cart_view = AddToCartView()
-#         add_to_cart_response = add_to_cart_view.post(request, *args, **kwargs)
-        
-#         # Check if the product was successfully added to the cart
-#         if add_to_cart_response.status_code == 201:
-#             # If successful, proceed to create an order
-#             user_id = request.user.id
-#             product_id = kwargs.get('product_id')
-#             # Logic to add product to order table
-#             order = Order.objects.create(user_id=user_id, product_id=product_id, quantity=1)
-#             order.save()
-            
-#             # Redirect to the order contents page
-#             return redirect('order_contents')
-#         else:
-#             # If adding to cart failed, handle the error accordingly
-#             # For example, return an error response or redirect to a different page
-#             return HttpResponse("Failed to add product to cart")
-
+#little issue here, since cart is being used so , it is taking the whole cart to make order
 class AddProductToOrderView(View):
     def post(self, request, *args, **kwargs):
         try:
             user_id = kwargs.get('user_id')
             product_id = kwargs.get('product_id')
-            # Retrieve the quantity from the request data
-            quantity = 1 # int(request.POST.get('quantity', 1))
-            # Retrieve the product
+            # Retrieve the user instance
+            user = User.objects.get(pk=user_id)
             product = get_object_or_404(Product, id=product_id)
-            # Calculate the total amount with discount
-            total_amount = product.price * quantity * (1 - (product.discount / 100))
-            # Create the order
-            order = Order.objects.create(user_id=user_id, product_id=product_id , total_amount=total_amount)
+            # Retrieve the user's cart
+            cart = Cart.objects.get(user=user)
+            # Create or get the cart item for the product
+            cart_item, created = CartItems.objects.get_or_create(cart=cart, products=product)
+            
+            total_amount = product.price * (1 - (product.discount / 100))
+            order = Order.objects.create(user_id=user, cart=cart, total_amount=total_amount)
             order.save()
-            # Redirect to the order contents page
-            # return redirect('order_contents')
-            return JsonResponse({'message': 'order is made , check the orders'}, status=201)
+            return JsonResponse({'message': 'Order is placed. Check your orders.'}, status=201)
         except Product.DoesNotExist:
             return HttpResponse("Error: Product does not exist")
         except Exception as e:
@@ -74,11 +51,12 @@ class AddProductToOrderView(View):
 
 class AddCartToOrderView(View):
     def post(self, request, *args, **kwargs):
-        user_id = request.user.id
-        cart_items = CartItems.objects.filter(cart__user_id=user_id)
+        user_id = kwargs.get('user_id')
+        user = User.objects.get(pk=user_id)
+        cart_items = CartItems.objects.filter(user=user)
         # Logic to add cart contents to order table
         for item in cart_items:
-            order = Order.objects.create(user_id=user_id, product_id=item.product_id, quantity=item.quantity)
+            order = Order.objects.create(user_id=user, product_id=item.products, quantity=item.quantity)
             order.save()
         return redirect('order_contents')
 

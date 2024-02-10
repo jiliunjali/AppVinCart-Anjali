@@ -23,8 +23,10 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success">Add to Cart</button>
             </form>
-            <a href="{% url 'add_product_to_order' user_id=request.user.id product_id=product.id  %}" class="btn btn-success">Buy Now</a>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+            <form method="post" action="{% url 'add_product_to_order' user_id=request.user.id product_id=product.id  %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Buy Now</button>
+            </form>   <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </div>
     </div>
 </div>
