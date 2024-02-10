@@ -1,115 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
+{% block title %}
+    Shopping Cart
+{% endblock %}
 
-        #cart, #save-for-later {
-            margin: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+{% block content %}
+    <div class="container mt-5">
+        <h1>Shopping Cart</h1>
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        button {
-            border: none;
-            background: none;
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-        button:hover {
-            color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <h1>Shopping Cart</h1>
-
-    {% if cart_items %}
-    <div id="cart">
-        <h2>Cart Items</h2>
-        <ul>
-            {% for item in cart_items %}
-            <li>
-                <div>
-                    <span>{{ item.product.name }}</span>
-                    <span>Quantity: {{ item.quantity }}</span>
-                    <span>Price: ${{ item.product.price }}</span>
-                </div>
-                <div>
-                    <form action="{% url 'deletefromcart' item.product.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit">Delete</button>
-                    </form>
-                    <form action="{% url 'saveforlater' item.product.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit">Save for Later</button>
-                    </form>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+        {% if cart_empty %}
+            <p>Your cart is empty.</p>
+        {% else %}
+            <div id="cart">
+                <h2>Cart Items</h2>
+                <ul>
+                    {% for item in cart_items %}
+                        <li>
+                            <div>
+                                <span>{{ item.products_id.name }}</span>
+                                <span>Quantity: {{ item.quantity }}</span>
+                                <span>Price: ${{ item.products_id.price }}</span>
+                                <form method="post" action="{% url 'deletefromcart'%}">
+                                    {% csrf_token %}
+                                    <button type="submit">Delete</button>
+                                </form>
+                                <form method="post" action="{% url 'saveforlater'  %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Save for Later</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'home' %}"><button>Back</button></a>
+                <a href="#"><button>Buy Now</button></a>
+            </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div id="empty-cart">
-        <p>Your cart is empty.</p>
-    </div>
-    {% endif %}
-
-    <!-- Include Save For Later section here -->
-    <div id="save-for-later">
-        <h2>Save for Later</h2>
-        <ul>
-            {% for item in save_for_later_items %}
-            <li>
-                <div>
-                    <span>{{ item.product.name }}</span>
-                    <span>Quantity: {{ item.quantity }}</span>
-                    <span>Price: ${{ item.product.price }}</span>
-                </div>
-                <div>
-                    <form action="{% url 'delete_from_save_for_later' item.product.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit">Delete</button>
-                    </form>
-                    <form action="{% url 'move_to_cart' item.product.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit">Move to Cart</button>
-                    </form>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-</html>
+{% endblock %}

@@ -13,7 +13,7 @@ class Cart(models.Model):
         super().save(*args, **kwargs)
         
         #iterating over each product and updating their quantity
-        for product in self.product_id.all():
+        for product in self.products_id.all():
             if product.stock_status == 'IN_STOCK' :
                 if product.quantity >= self.quantity:
                     product.quantity -= self.quantity

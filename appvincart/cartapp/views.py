@@ -3,6 +3,11 @@ from django.shortcuts import get_object_or_404, render
 from django.views import View
 from rest_framework.response import Response
 from authapp.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.response import Response
+
+
+
 
 from productapp.models import Product
 from .models import Cart, SaveForLater
@@ -10,34 +15,39 @@ from .models import Cart, SaveForLater
 
 # Create your views here.
 
-class CartView(View):
-    template_name = 'cart.html'  # Specify the template name
+class CartView(LoginRequiredMixin,View):
+    template_name = 'cart.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user_id = self.request.user.id  # Assuming you have authenticated users
-        cart_items = Cart.objects.filter(user_id=user_id)
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')  
+        cart_items = Cart.objects.filter(user_id=user_id).prefetch_related('products_id')
+        context = {}
         if cart_items.exists():
             context['cart_items'] = cart_items
         else:
             context['cart_empty'] = True
-        return context
-class AddToCartView(View):
+        return render(request, self.template_name, context)
     
-    template_name ='cart.html'
+
+class AddToCartView(LoginRequiredMixin,View):
+    
+    template_name ='addcart.html'
     context_object_name = 'cart_items'
     
     def post(self, request, *args, **kwargs):
-        user_id_ = request.data.get('user_id')
-        product_id_ = request.data.get('product_id')
-        quantity = request.data.get('quantity',1) # default to 1
+        user_id_ = kwargs.get('user_id')
+        product_id_ = kwargs.get('product_id')
+        quantity = int(request.POST.get('quantity', 1)) # default to 1
+        
+        # Retrieve the user instance corresponding to the user_id
+        user = get_object_or_404(User, id=user_id_)
         
         #if product_id or user_id is not correctly taken in request
-        if not all[product_id_ , user_id_ ]:
+        if not all([product_id_ , user_id_ ]):
             return JsonResponse({'error': 'User ID and Product ID are required.'}, status=400)
         
         # Retrieve the cart or create a new one if it doesn't exist
-        cart, created =Cart.objects.get_or_create(user_id = user_id_)
+        cart, created =Cart.objects.get_or_create(user_id = user)
         
         #checking for already existance of product in the cart
         if cart.products_id.filter(id=product_id_ ).exists():
@@ -51,14 +61,14 @@ class AddToCartView(View):
         cart.products_id.add(product, through_defaults={'quantity': quantity})
         return JsonResponse({'message': 'Product added to cart.'}, status=201)
     
-class DeleteFromCartView(View):
+class DeleteFromCartView(LoginRequiredMixin,View):
     
     template_name ='cart.html'
     context_object_name = 'cart_items'
     
     def post(self, request, *args, **kwargs):
-        user_id_ = request.data.get('user_id')
-        product_id_ = request.data.get('product_id')
+        user_id_ = request.POST.get('user_id')
+        product_id_ = request.POST.get('product_id')
         
         #if product_id or user_id is not correctly taken in request
         if not all[product_id_ , user_id_ ]:

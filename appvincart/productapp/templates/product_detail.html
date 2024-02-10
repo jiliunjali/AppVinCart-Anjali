@@ -19,7 +19,10 @@
             {% endif %}
             <hr>
             <p>{{ product.description }}</p>
-            <a href="{% url 'addtocart' %}" class="btn btn-success">Add to Cart</a>
+            <form method="post" action="{% url 'addtocart' product.id user_id  %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Add to Cart</button>
+            </form>
             <a href="#" class="btn btn-success">Buy Now</a>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </div>
@@ -46,28 +49,4 @@
     </div>
 </div>
 {% endblock %}
-
-
-{% comment %} {% extends 'base.html' %}
-{% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
-        </div>
-        <div class="col-md-8">
-            <h1>{{ product.name }}</h1>
-            <p><small>Stock Status: {{ product.stock_status }}</small></p>
-            <p><small>Price: {{ product.price }}</small></p>
-            <p><small>Quantity: {{ product.quantity }}</small></p>
-            <p><small>Color: {{ product.color }}</small></p>
-            <hr>
-            <p>{{ product.description }}</p>
-            <a href="#" class="btn btn-success">Add to Cart</a>
-            <a href="#" class="btn btn-success">Buy Now</a>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-        </div>
-    </div>
-</div>
-{% endblock %} {% endcomment %}
 

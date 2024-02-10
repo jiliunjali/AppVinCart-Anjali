@@ -207,3 +207,5 @@ PASSWORD_RESET_TIMEOUT=900  # 900 sec-> 15 min. means after 15 mins the token ge
 STATICFILES_DIRS=[
     BASE_DIR/"static",
     ]
+
+LOGIN_REDIRECT_URL = ''  # Specify the URL where users should be redirected after login

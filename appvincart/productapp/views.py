@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from .models import Product
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 # Create your views here.
 class Home(ListView):
@@ -23,9 +25,14 @@ class Home(ListView):
             queryset = Product.objects.all()
         return queryset
     
-class ProductDetail(DetailView):
+class ProductDetail(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'product_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_id'] = self.request.user.id if self.request.user.is_authenticated else None
+        return context
 
 #extra view added to make search bar reactive if possible
 class ProductFilterView(ListView):
