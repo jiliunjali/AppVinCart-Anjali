@@ -1,0 +1,29 @@
+<!-- feedback_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    All Feedback
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>All Feedback</h1>
+        <ul>
+            {% for feedback in feedbacks %}
+                <li>
+                    <p>{{ feedback.feedback }}</p>
+                    <p>Rating: {{ feedback.rating_category }}</p>
+                    <p>Product ID: {{ feedback.product_id }}</p>
+                    <p>Users:</p>
+                    <ul>
+                        {% for user in feedback.user_id.all %}
+                            <li>{{ user.name }}</li>
+                            <li>{{ user.email }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

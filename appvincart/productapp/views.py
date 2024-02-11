@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+
+from orderapp.models import FeedBack
 from .models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -31,7 +33,12 @@ class ProductDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_id'] = self.request.user.id if self.request.user.is_authenticated else None
+        user_id = self.request.user.id if self.request.user.is_authenticated else None
+        product = self.object
+        feedbacks = FeedBack.objects.filter(product_id=product)
+        context['feedbacks'] = feedbacks
+        context['user_id'] = user_id
+        context['stars_range'] = range(5)
         return context
 
 #extra view added to make search bar reactive if possible

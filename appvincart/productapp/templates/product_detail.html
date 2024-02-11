@@ -30,7 +30,42 @@
         </div>
     </div>
 </div>
+<hr>
+                <!-- Display feedback for the product -->
+                <h2>Reviews</h2>
+                {% if feedbacks %}
+                    <div class="row">
+                        {% for feedback in feedbacks %}
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <p class="card-text">{{ feedback.feedback }}</p>
+                                        <p class="card-text">Rating: {{ feedback.rating_category}}</p>
+                                            {% comment %} {% for i in stars_range %}
+                                                {% if i < feedback.rating_category %}
+                                                    <span class="fa fa-star checked"></span>
+                                                {% else %}
+                                                    <span class="fa fa-star"></span>
+                                                {% endif %}
+                                            {% endfor %} {% endcomment %}
 
+                                        </p>
+                                        <p class="card-text">Users: {{ feedback.feedbacks.user_id.name}}  -  {{ feedback.feedbacks.user_id.email}}</p>
+
+                                        {% comment %} <ul>
+                                            {% for user in feedback.user_id.all %}
+                                                <li>{{ user.username }}</li>
+                                            {% endfor %}
+                                        </ul> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No reviews yet.</p>
+                {% endif %}
+            </div>
 <!-- Product Modal -->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">

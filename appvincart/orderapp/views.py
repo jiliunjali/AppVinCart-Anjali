@@ -2,10 +2,11 @@ from decimal import Decimal
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
+from django.views.generic import ListView
 from authapp.models import User
 
 from productapp.models import Product
-from .models import Order
+from .models import Order, FeedBack
 from cartapp.models import Cart, CartItems
 from cartapp.views import AddToCartView
 
@@ -69,3 +70,8 @@ class DeleteOrderView(View):
         order.delete()  # Delete the order
         # Move data to save for later table if needed
         return redirect('order_contents')
+    
+class FeedBackView(ListView):
+    model = FeedBack
+    template_name = 'feedback_list.html'
+    context_object_name = 'feedbacks'

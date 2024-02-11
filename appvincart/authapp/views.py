@@ -1,4 +1,4 @@
-from audioop import reverse
+from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -8,6 +8,7 @@ from .renderers import UserRenderer, SuccessRenderer
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework_simplejwt.tokens import RefreshToken #for refresh token
 from rest_framework.permissions import IsAuthenticated
+
 
 # generating token manually - jwt token # HS256 the algo used in jwt token by default
 def get_tokens_for_user(user):
@@ -33,7 +34,8 @@ class UserRegisterationView(APIView):
         if serializer.is_valid(raise_exception = True):
             user = serializer.save()
             token = get_tokens_for_user(user)
-            return Response({'token':token ,'msg':'Registration Successful'}, status = status.HTTP_201_CREATED) # status is 201 as data is being created
+            # return Response({'token':token ,'msg':'Registration Successful'}, status = status.HTTP_201_CREATED) # status is 201 as data is being created
+            return redirect('login')
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 #authentication is done here
@@ -57,6 +59,7 @@ class UserLoginView(APIView):
             if user is not None:
                 token = get_tokens_for_user(user)
                 return Response({'token':token ,'msg':'Login Success'}, status = status.HTTP_201_CREATED)
+                # return redirect('home')
             else:
                 return Response({'errors':{'non_field_errors': ['Email or Password is not valid']}}, status = status.HTTP_404_NOT_FOUND)
             
@@ -110,10 +113,15 @@ class UserPasswordResetView(APIView):
 class UserLogoutView(APIView):
     def post(self, request, format = None):
         try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"success": "User logged out successfully."}, status=status.HTTP_200_OK)
+            refresh_token = request.data.get("refresh")
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({"success": "User logged out successfully."}, status=status.HTTP_200_OK)
+                # return redirect('login')  # Redirect to the login page after successful logout
+            else:
+                return Response({"error": "Refresh token not provided."}, status=status.HTTP_400_BAD_REQUEST)
+        
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
