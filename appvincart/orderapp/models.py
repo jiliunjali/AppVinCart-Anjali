@@ -38,7 +38,6 @@ class FeedBack(models.Model):
     rating_category = models.IntegerField(null = True, choices = rating_choices)
     product_id = models.ForeignKey(Product, related_name='feedbacks', on_delete=models.SET_NULL, null=True, blank=True)
     user_id = models.ManyToManyField(User, related_name='feedbacks')
-    
 
 # order and rating table will be here, rating will be asked when order is delivered for the feedback
 # a user can rate multiple and a rate can have multiple users

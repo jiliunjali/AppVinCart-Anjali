@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.views.generic import ListView
 from authapp.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from productapp.models import Product
 from .models import Order, FeedBack
@@ -13,19 +14,24 @@ from cartapp.views import AddToCartView
 
 class DisplayOrderContentsView(View):
     def get(self, request, *args, **kwargs):
-        user_id = kwargs.get('user_id')
-        orders = Order.objects.filter(user_id=user_id)
-        # Calculate total price for each order item
-        for order in orders:
-            total_amount = Decimal(0)
-            cart_items = order.cart.cart_items.all()  # Access related CartItems
-            for cart_item in cart_items:
-                # Calculate total amount for each cart item
-                total_amount += Decimal(cart_item.products.price * cart_item.quantity * (1 - (cart_item.products.discount / 100)))
-            order.total_amount = total_amount
-        total_price = sum(order.total_amount for order in orders)
-        
-        return render(request, 'order_contents.html', {'orders': orders, 'total_price': total_price})
+        try:
+            user_id = kwargs.get('user_id')
+            orders = Order.objects.filter(user_id=user_id)
+            # for total price for each order item
+            for order in orders:
+                total_amount = Decimal(0)
+                cart_items = order.cart.cart_items.all()  # to access related CartItems
+                for cart_item in cart_items:
+                    # for total amount for each cart item
+                    total_amount += Decimal(cart_item.products.price * cart_item.quantity * (1 - (cart_item.products.discount / 100)))
+                order.total_amount = total_amount
+            total_price = sum(order.total_amount for order in orders)
+
+            return render(request, 'order_contents.html', {'orders': orders, 'total_price': total_price})
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'User orders not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 #little issue here, since cart is being used so , it is taking the whole cart to make order
 class AddProductToOrderView(View):
@@ -63,15 +69,19 @@ class AddCartToOrderView(View):
 
 class DeleteOrderView(View):
     def post(self, request, *args, **kwargs):
-        order_id = kwargs.get('order_id')
-        order = Order.objects.get(id=order_id)
-        # Logic to delete order and move data to save for later table
-        # For example:
-        order.delete()  # Delete the order
-        # Move data to save for later table if needed
-        return redirect('order_contents')
+        try:
+            order_id = kwargs.get('order_id')
+            order = Order.objects.get(id=order_id)
+            order.delete()
+            return JsonResponse({'message': 'Order is successfully removed. Check your updates.'}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'Order not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     
 class FeedBackView(ListView):
     model = FeedBack
     template_name = 'feedback_list.html'
     context_object_name = 'feedbacks'
+    
+    

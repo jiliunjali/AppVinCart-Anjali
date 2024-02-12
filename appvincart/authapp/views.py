@@ -58,8 +58,8 @@ class UserLoginView(APIView):
             user=authenticate(email=email, password=password) 
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({'token':token ,'msg':'Login Success'}, status = status.HTTP_201_CREATED)
-                # return redirect('home')
+                # return Response({'token':token ,'msg':'Login Success'}, status = status.HTTP_201_CREATED)  # can be use to test if token is generated and what was the token
+                return redirect('home')
             else:
                 return Response({'errors':{'non_field_errors': ['Email or Password is not valid']}}, status = status.HTTP_404_NOT_FOUND)
             

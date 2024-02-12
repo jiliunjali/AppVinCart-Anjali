@@ -7,6 +7,25 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
+class DummyHomeView(ListView):
+    model = Product
+    template_name = 'home.html'
+    context_object_name = 'products' # name under which queryset will be available in the template
+    
+    def get_queryset(self):
+        # Sort by new arrival (newest first)
+        sort_by = self.request.GET.get('sort')
+        if sort_by == 'new_arrival':
+            queryset = Product.objects.order_by('-id')
+        elif sort_by == 'from_oldest':
+            queryset = Product.objects.order_by('id')
+        elif sort_by == 'price_max_to_low':
+            queryset = Product.objects.order_by('-price')
+        elif sort_by == 'price_low_to_max':
+            queryset = Product.objects.order_by('price')
+        else:
+            queryset = Product.objects.all()
+        return queryset
 class Home(ListView):
     model = Product
     template_name = 'home.html'

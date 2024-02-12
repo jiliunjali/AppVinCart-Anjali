@@ -7,29 +7,38 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1>Wish Cart</h1>
+        <h1>WishList</h1>
 
         {% if cart_empty %}
-            <p>Your wishlist is empty.</p>
+            <div class="alert alert-info" role="alert">
+                Your wishlist is empty.
+            </div>
         {% else %}
             <div id="cart">
-                <h2>Cart Items</h2>
-                <ul>
-                    {% for item in cart_items %}
-                        <li>
-                            <div>
-                                <span>{{ item.products_id.name }}</span> 
-                                <span>Price: ${{ item.products_id.price }}</span> 
-                                {% comment %} <form method="post" action="{% url 'delete_from_cart' user_id=request.user.id product_id=item.products_id.id %}"> <!-- Changed to pass cart and product IDs as arguments -->
-                                    {% csrf_token %}
-                                    <button type="submit">Delete</button>
-                                </form> {% endcomment %}
+                <h3>Cart Items</h3>
+                <ul class="list-group">
+                    {% for product in cart_items %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span>{{ product.name }}</span> 
+                                    <span class="ml-3">Price: ${{ product.price }}</span> 
+                                </div>
+                                <div class="btn-group">
+                                    <form method="post" action="{% url 'delete_from_wishlist' user_id=user_id product_id=product.id %}"> 
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger mr-3">Delete</button>
+                                    </form>
+                                    <form method="post" action="{% url 'transfer_to_cart' user_id=user_id product_id=product.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success mr-2">Add to Cart</button>
+                                    </form>
+                                </div>
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
-                <a href="{% url 'home' %}"><button>Back</button></a>
-                {% comment %} <a href="{% url 'add_to_cart' user_id=request.user.id product_id=item.products_id.id  %}"><button>Add to Cart</button></a> {% endcomment %}
+                <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back</a>
             </div>
         {% endif %}
     </div>
@@ -45,35 +54,40 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1>Shopping Cart</h1>
+        <h1>Wish Cart</h1>
 
         {% if cart_empty %}
-            <p>Your cart is empty.</p>
+            <div class="alert alert-info" role="alert">
+                Your wishlist is empty.
+            </div>
         {% else %}
             <div id="cart">
                 <h2>Cart Items</h2>
-                <ul>
-                    {% for item in cart_items %}
-                        <li>
-                            <div>
-                                <span>{{ item.products_id.name }}</span>
-                                <span>Quantity: {{ item.quantity }}</span>
-                                <span>Price: ${{ item.products_id.price }}</span>
-                                <form method="post" action="{% url 'deletefromcart'%}">
-                                    {% csrf_token %}
-                                    <button type="submit">Delete</button>
-                                </form>
-                                <form method="post" action="{% url 'saveforlater'  %}">
-                                    {% csrf_token %}
-                                    <button type="submit">Save for Later</button>
-                                </form>
+                <ul class="list-group">
+                    {% for product in cart_items %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span>{{ product.name }}</span> 
+                                    <span class="ml-3">Price: ${{ product.price }}</span> 
+                                </div>
+                                <div class="btn-group">
+                                    <form method="post" action="{% url 'delete_from_wishlist' user_id=user_id product_id=product.id %}"> 
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                    <form method="post" action="{% url 'transfer_to_cart' user_id=user_id product_id=product.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Add to Cart</button>
+                                    </form>
+                                </div>
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
-                <a href="{% url 'home' %}"><button>Back</button></a>
-                <a href="#"><button>Buy Now</button></a>
+                <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Back</a>
             </div>
         {% endif %}
     </div>
-{% endblock %} {% endcomment %}
+{% endblock %}
+ {% endcomment %}

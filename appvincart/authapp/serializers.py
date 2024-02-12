@@ -16,7 +16,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'},write_only = True) 
     class Meta:
         model = User
-        # fields = '__all__' # all what we what needed to be mentioned in create_user method of usermanager
         fields = ['email', 'first_name', 'last_name', 'phone', 'address', 'gender', 'password', 'password2'] # TODO for all columns in user that we want we need to provide then in create_user method of user_manager to enable the working
         extra_kwargs={
             'password': {'write_only': True}
