@@ -98,7 +98,7 @@ DATABASES = {
 #added by me: for jwt authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Replace with JWTAuthentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # Replace with JWTAuthentication
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -157,12 +157,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authapp.User'  # added by me , so that foreign key constraint error won't occur
 
 #configuration for sending email for password reset (part of password forgot mechanism)
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.yopmail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'tempftempl012001@gmail.com'  #os.environ.get('EMAIL_USER')
+# EMAIL_HOST_PASSWORD = 'temp@123'  #os.environ.get('EMAIL_PASS')
+# EMAIL_USE_TLS = True
 
 
 

@@ -12,6 +12,8 @@ from cartapp.models import Cart, CartItems
 from cartapp.views import AddToCartView
 
 
+
+
 class DisplayOrderContentsView(View):
     def get(self, request, *args, **kwargs):
         try:
@@ -56,15 +58,34 @@ class AddProductToOrderView(View):
         except Exception as e:
             return HttpResponse(f"Error: {e}")
 
+# class AddCartToOrderView(View):
+#     def post(self, request, *args, **kwargs):
+#         user_id = kwargs.get('user_id')
+#         user = User.objects.get(pk=user_id)
+#         cart_items = CartItems.objects.filter(user=user)
+#         # Logic to add cart contents to order table
+#         for item in cart_items:
+#             order = Order.objects.create(user_id=user, product_id=item.products, quantity=item.quantity)
+#             order.save()
+#         return redirect('order_contents')
 class AddCartToOrderView(View):
     def post(self, request, *args, **kwargs):
         user_id = kwargs.get('user_id')
         user = User.objects.get(pk=user_id)
-        cart_items = CartItems.objects.filter(user=user)
+        cart = Cart.objects.get(user=user)
+        
         # Logic to add cart contents to order table
-        for item in cart_items:
-            order = Order.objects.create(user_id=user, product_id=item.products, quantity=item.quantity)
-            order.save()
+        order = Order.objects.create(user_id=user)
+        
+        cart_items = cart.cart_items.all()
+        for cart_item in cart_items:
+            order_item = order.order_items.create(
+                product_id=cart_item.product_id,
+                quantity=cart_item.quantity
+            )
+            # Optionally, you can remove cart items after adding them to the order
+            cart_item.delete()
+        
         return redirect('order_contents')
 
 class DeleteOrderView(View):
@@ -79,9 +100,5 @@ class DeleteOrderView(View):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     
-class FeedBackView(ListView):
-    model = FeedBack
-    template_name = 'feedback_list.html'
-    context_object_name = 'feedbacks'
-    
+
     

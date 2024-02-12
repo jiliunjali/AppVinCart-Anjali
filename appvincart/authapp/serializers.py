@@ -1,9 +1,6 @@
 #serializers are like modelform
 from rest_framework import serializers
-
-from .utils import Util
 from  .models import User
-
 #specially for reset password after forget password clicking  
 from xml.dom import ValidationErr
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
@@ -16,7 +13,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'},write_only = True) 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'phone', 'address', 'gender', 'password', 'password2'] # TODO for all columns in user that we want we need to provide then in create_user method of user_manager to enable the working
+        fields = ['email', 'first_name', 'last_name', 'phone', 'address', 'gender', 'password', 'password2'] 
         extra_kwargs={
             'password': {'write_only': True}
         }
@@ -71,25 +68,10 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         if User.objects.filter(email=email).exists(): # check that email in user table have one of the email as one used by the the current user
-            # we need to send email so that user can reset his email
-            user = User.objects.get(email = email) # by matching email , we will acquire all data of that user
-            uid = urlsafe_base64_encode(force_bytes(user.id)) # we will pass user id encoded as bite code
-            token = PasswordResetTokenGenerator().make_token(user)
-            link = 'http://localhost:3000/api/user/reset/'+uid+'/'+token
-            print('Password reset Link', link)
-            #send email to user
-            body = 'Click Following Link to reset your password'+ link
-            data = {
-                'email_subject':'reset your password',
-                'body': body,
-                'to_email' : user.email
-            }
-            Util.send_email(data)
             return data
         else:
             raise ValidationErr('You are not a Registered User')
         
-# TODO check error here
 class UserPasswordResetSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=100,style={'input_type': 'password'},write_only = True)
     password2 = serializers.CharField(max_length=100,style={'input_type': 'password'},write_only = True)
@@ -115,5 +97,4 @@ class UserPasswordResetSerializer(serializers.Serializer):
         except DjangoUnicodeDecodeError as identifier:
             PasswordResetTokenGenerator().check_token(user,token)
             raise serializers.ValidationError('Token is not Valid or Expired')
-        #try-except is used for extra layer of security
         
