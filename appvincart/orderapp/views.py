@@ -58,36 +58,25 @@ class AddProductToOrderView(View):
         except Exception as e:
             return HttpResponse(f"Error: {e}")
 
-# class AddCartToOrderView(View):
-#     def post(self, request, *args, **kwargs):
-#         user_id = kwargs.get('user_id')
-#         user = User.objects.get(pk=user_id)
-#         cart_items = CartItems.objects.filter(user=user)
-#         # Logic to add cart contents to order table
-#         for item in cart_items:
-#             order = Order.objects.create(user_id=user, product_id=item.products, quantity=item.quantity)
-#             order.save()
-#         return redirect('order_contents')
 class AddCartToOrderView(View):
     def post(self, request, *args, **kwargs):
-        user_id = kwargs.get('user_id')
-        user = User.objects.get(pk=user_id)
-        cart = Cart.objects.get(user=user)
+        try:
+            user_id = kwargs.get('user_id')
+            user = User.objects.get(pk=user_id)
+            cart = Cart.objects.get(user=user)
+            cart_items = CartItems.objects.filter(cart=cart)
+            for cart_item in cart_items:
+                order = Order.objects.create(
+                    user_id=user,
+                    cart=cart,
+                    total_amount=cart_item.products.price * cart_item.quantity * (1 - (cart_item.products.discount / 100))
+                )
+            return JsonResponse({'message': 'Orders are placed. Check your orders.'}, status=201)
+        except Cart.DoesNotExist:
+            return HttpResponse("Error: Cart does not exist")
+        except Exception as e:
+            return HttpResponse(f"Error: {e}")
         
-        # Logic to add cart contents to order table
-        order = Order.objects.create(user_id=user)
-        
-        cart_items = cart.cart_items.all()
-        for cart_item in cart_items:
-            order_item = order.order_items.create(
-                product_id=cart_item.product_id,
-                quantity=cart_item.quantity
-            )
-            # Optionally, you can remove cart items after adding them to the order
-            cart_item.delete()
-        
-        return redirect('order_contents')
-
 class DeleteOrderView(View):
     def post(self, request, *args, **kwargs):
         try:
@@ -99,6 +88,4 @@ class DeleteOrderView(View):
             return JsonResponse({'error': 'Order not found.'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-    
 
-    
