@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 class DummyHomeView(ListView):
     model = Product
-    template_name = 'home.html'
+    template_name = 'dummy_home.html'
     context_object_name = 'products' # name under which queryset will be available in the template
     
     def get_queryset(self):
