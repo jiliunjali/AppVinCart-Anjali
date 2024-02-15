@@ -116,9 +116,9 @@
                 <a href="{% url 'cart' user_id=request.user.id  %}" class="btn btn-secondary">Back to Cart</a>
                 <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
                 <!-- Payment form outside the loop -->
-                <form method="post" action="#">
+                <form method="post" action="{% url 'pay_page' %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Pay Order</button>
+                    <button type="submit" class="btn btn-success">Pay for Order</button>
                 </form>
             </div>
         {% else %}

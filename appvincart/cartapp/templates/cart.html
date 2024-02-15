@@ -18,8 +18,11 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-                    <form method="post" action="{% url 'add_cart_to_order' user_id=user_id %}">
+                    <form method="post" action="{% url 'add_to_order' user_id=user_id %}">
                         {% csrf_token %}
+                        {% for item in cart_items %}
+                            <input type="hidden" name="product_ids[]" value="{{ item.products.id }}">
+                        {% endfor %}
                         <button type="submit" class="btn btn-success ml-2">Buy</button>
                     </form>
                 </div>

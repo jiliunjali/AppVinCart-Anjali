@@ -23,10 +23,17 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success">Add to Cart</button>
             </form>
-            <form method="post" action="{% url 'add_product_to_order' user_id=request.user.id product_id=product.id  %}">
+            {% comment %} <form method="post" action="{% url 'add_product_to_order' user_id=request.user.id product_id=product.id  %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success">Buy Now</button>
-            </form>   <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+            </form>  {% endcomment %}
+            <form method="post" action="{% url 'add_to_order' user_id=request.user.id %}">
+                {% csrf_token %}
+                <!-- Include product IDs as hidden fields in the form -->
+                <input type="hidden" name="product_ids[]" value="1">
+                <button type="submit">Buy Now</button>
+            </form>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </div>
     </div>
 </div>

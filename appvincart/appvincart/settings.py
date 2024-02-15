@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     # 'corsheaders', #in order to avoid a certain typ of error that is encountered when connecting beckend with forntend
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'paymentapp',
 ]
 
 MIDDLEWARE = [
@@ -198,4 +199,11 @@ STATICFILES_DIRS=[
     BASE_DIR/"static",
     ]
 
-LOGIN_REDIRECT_URL = ''  # Specify the URL where users should be redirected after login
+LOGIN_REDIRECT_URL = '/home/'  # Specify the URL where users should be redirected after login
+
+
+STRIPE_PUBLIC_KEY = 'pk_test_51OjyDiSI7Oo1z2hJNqq1ICMbGpMrUepiPQKiQkcvXIAaxkBenvVMKH87aHVrKa4bWXpPjSNZo5ws0FRzZv9JOdHk00A0hOoVRN'
+STRIPE_SECRET_KEY = 'sk_test_51OjyDiSI7Oo1z2hJRI5fJws2Va4Na01OA5LCMjPuV2fpguOTmimUcfcDPEC90w2MglR3Dqi2ofibLSASrOvnfmv4001z47y9Xz'
+PRODUCT_PRICE = 'price_1OjzuJSI7Oo1z2hJQCa8Uy8B'
+
+REDIRECT_DOMAIN = 'http://127.0.0.1'

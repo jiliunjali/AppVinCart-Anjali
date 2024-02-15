@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 class DummyHomeView(ListView):
     model = Product
-    template_name = 'home.html'
+    template_name = 'dummy_home.html'
     context_object_name = 'products' # name under which queryset will be available in the template
     
     def get_queryset(self):
@@ -26,6 +26,7 @@ class DummyHomeView(ListView):
         else:
             queryset = Product.objects.all()
         return queryset
+    
 class Home(ListView):
     model = Product
     template_name = 'home.html'
@@ -46,7 +47,7 @@ class Home(ListView):
             queryset = Product.objects.all()
         return queryset
     
-class ProductDetail(LoginRequiredMixin, DetailView):
+class ProductDetail(DetailView):
     model = Product
     template_name = 'product_detail.html'
 
