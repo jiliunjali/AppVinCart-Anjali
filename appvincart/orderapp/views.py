@@ -11,7 +11,7 @@ from .models import Order, FeedBack
 from cartapp.models import Cart, CartItems
 from cartapp.views import AddToCartView
 
-
+from django.db import transaction
 
 
 class DisplayOrderContentsView(View):
@@ -22,10 +22,9 @@ class DisplayOrderContentsView(View):
             # for total price for each order item
             for order in orders:
                 total_amount = Decimal(0)
-                cart_items = order.cart.cart_items.all()  # to access related CartItems
-                for cart_item in cart_items:
-                    # for total amount for each cart item
-                    total_amount += Decimal(cart_item.products.price * cart_item.quantity * (1 - (cart_item.products.discount / 100)))
+                products = order.product.all()
+                for product in products:
+                    total_amount += Decimal(product.price * (1 - (product.discount / 100)))
                 order.total_amount = total_amount
             total_price = sum(order.total_amount for order in orders)
 
@@ -89,25 +88,63 @@ class DeleteOrderView(View):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
         
+# class AddToOrderView(View):
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             user_id = kwargs.get('user_id')
+#             product_ids = request.POST.getlist('product_ids[]')
+#             # Retrieve the user instance
+#             user = User.objects.get(pk=user_id)
+#             order = Order.objects.create(user_id=user)
+#             # Add all selected products to the order
+#             total_amount = 0
+#             for product_id in product_ids:
+#                 product = get_object_or_404(Product, id=product_id)
+#                 total_amount += product.price * (1 - (product.discount / 100))
+#                 order.product.add(product)
+#             order.total_amount = total_amount
+#             order.save()
+#             return JsonResponse({'message': 'Order is placed. Check your orders.'}, status=201)
+#         except Product.DoesNotExist:
+#             return HttpResponse("Error: Product does not exist")
+#         except Exception as e:
+#             return HttpResponse(f"Error: {e}")
+        
+# from django.db import transaction
+
 class AddToOrderView(View):
     def post(self, request, *args, **kwargs):
         try:
             user_id = kwargs.get('user_id')
             product_ids = request.POST.getlist('product_ids[]')
+
             # Retrieve the user instance
             user = User.objects.get(pk=user_id)
-            order = Order.objects.create(user_id=user)
-            # Add all selected products to the order
-            total_amount = 0
-            for product_id in product_ids:
-                product = get_object_or_404(Product, id=product_id)
-                total_amount += product.price * (1 - (product.discount / 100))
-                order.products.add(product)
-            order.total_amount = total_amount
-            order.save()
+
+            # Start a database transaction
+            with transaction.atomic():
+                # Create the Order instance
+                order = Order.objects.create(user_id=user)
+
+                # Add all selected products to the order
+                total_amount = 0
+                for product_id in product_ids:
+                    product = get_object_or_404(Product, id=product_id)
+                    total_amount += product.price * (1 - (product.discount / 100))
+                    order.product.add(product)
+
+                # Update the total_amount field
+                order.total_amount = total_amount
+
+                # Save the Order instance
+                order.save()
+
             return JsonResponse({'message': 'Order is placed. Check your orders.'}, status=201)
+
         except Product.DoesNotExist:
             return HttpResponse("Error: Product does not exist")
+
         except Exception as e:
             return HttpResponse(f"Error: {e}")
+
 

@@ -30,7 +30,7 @@
             <form method="post" action="{% url 'add_to_order' user_id=request.user.id %}">
                 {% csrf_token %}
                 <!-- Include product IDs as hidden fields in the form -->
-                <input type="hidden" name="product_ids[]" value="1">
+                <input type="hidden" name="product_ids[]" value="{{product.id}}">
                 <button type="submit">Buy Now</button>
             </form>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
