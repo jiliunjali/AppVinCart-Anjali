@@ -1,5 +1,5 @@
 import time
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -165,3 +165,37 @@ class PaymentSuccessView(View):
 # class PaymentCancelledView(View):
 #     def get(self, request, *args, **kwargs):
 #         return render(request, 'payment_cancel.html')
+
+class PaymentRefundView(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')
+        client_secret = request.POST.get('payment_id')
+        try:
+            payment = Payment.objects.get(user=user_id, client_secret=client_secret)
+        except Payment.DoesNotExist:
+            return JsonResponse({'error': 'Payment not found'}, status=404)
+        try:
+            # payment_intent = stripe.PaymentIntent.retrieve(client_secret)
+            id = client_secret.split('_')[1]
+            payment_intent_id='pi_'+id
+            print(payment_intent_id)
+            refund = stripe.Refund.create(
+                payment_intent=payment_intent_id,
+                amount=int(payment.amount_paid),
+            )
+            return JsonResponse({'message': 'Refund successful'}, status=200)
+        except stripe.error.StripeError as e:
+            return JsonResponse({'error': str(e)}, status=500)
+        
+class PaymentListView(View):
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise Http404("User does not exist")
+        payments = Payment.objects.filter(user=user, is_paid=True)
+        return render(request, 'payment_display.html', {'payments': payments})

@@ -1,0 +1,13 @@
+<h2>Payments</h2>
+<br>
+{% for payment in payments %}
+    {% if payment.is_paid %}
+        {{ payment.order.product.name }} - {{ payment.amount_paid }}
+        <form method="post" action="{% url 'payment_refund' user_id=request.user.id %}">
+            {% csrf_token %}
+            <!-- Include payment ID as a hidden field in the form -->
+            <input type="hidden" name="payment_id" value="{{ payment.client_secret }}">
+            <button type="submit">Initiate Refund</button>
+        </form>
+    {%endif%}
+{% endfor %}

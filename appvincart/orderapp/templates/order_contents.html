@@ -69,6 +69,11 @@
                 <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
             </div>
         </div>
+        <div class="row">
+            <div class="col text-end">
+                <a href="{% url 'payments_display' user_id=request.user.id %}" class="btn btn-primary">Payments</a>
+            </div>
+        </div>
     </div>
     
     <div class="container">
