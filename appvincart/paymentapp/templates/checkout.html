@@ -1,81 +1,3 @@
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout</title>
-    <script src="https://js.stripe.com/v3/"></script>
-</head>
-<body>
-    <h1>Checkout Summary</h1>
-    <br>
-    {{ client_secret }}
-    <p>Payment for user: {{ user.first_name }} {{ user.last_name }}</p>
-    <ul>
-        {% for order in orders %}
-            {% for product in order.product.all %}
-                {{ product.name }}  - ${{ product.price }}<br>{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        {% endfor %}
-    </ul>
-    <p>Total Amount: ${{ total_amount }}</p>
-    
-    <form id="payment-form">
-        <div id="payment-element">
-            <!-- Elements will create form elements here -->
-        </div>
-        <button id="submit">Submit</button>
-        <div id="error-message">
-            <!-- Display error message to your customers here -->
-        </div>
-    </form>
-
-    <script>
-        // Set up Stripe.js and Elements to use in checkout form
-        var stripe = Stripe('pk_test_51OjyDiSI7Oo1z2hJNqq1ICMbGpMrUepiPQKiQkcvXIAaxkBenvVMKH87aHVrKa4bWXpPjSNZo5ws0FRzZv9JOdHk00A0hOoVRN');
-        var elements = stripe.elements();
-        var paymentElement = elements.create('card');
-        paymentElement.mount('#payment-element');
-        var clientSecret = "{{ client_secret }}";
-        var form = document.getElementById('payment-form');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Create a payment method using the card element
-            stripe.createPaymentMethod({
-                type: 'card',
-                card: paymentElement,
-            }).then(function (result) {
-                if (result.error) {
-                    // Handle error
-                    console.error(result.error);
-                } else {
-                    // Payment method ID is available in result.paymentMethod.id
-                    var paymentMethodId = result.paymentMethod.id;
-                    console.log('Payment Method ID:', paymentMethodId);
-
-                    // Now confirm the PaymentIntent with the payment method
-                    stripe.confirmPayment(clientSecret, {
-                        payment_method: paymentMethodId,
-                        confirmParams: {
-                            // Return URL where the customer should be redirected after the PaymentIntent is confirmed.
-                            return_url: 'http://127.0.0.1:8000/pay/payment_success',
-                        }
-                    }).then(function(result) {
-                        if (result.error) {
-                            // Display error message to customer
-                            var errorElement = document.getElementById('error-message');
-                            errorElement.textContent = result.error.message;
-                        } else {
-                            // Payment successful, redirect or show success message
-                            window.location.href = 'successful_payment_page';
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-</body>
-</html> {% endcomment %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -114,6 +36,7 @@ var paymentElement = elements.create('card');
 paymentElement.mount('#payment-element');
 var clientSecret = "{{ client_secret }}";
 var form = document.getElementById('payment-form');
+var payment_id = "{{ payment_id }}";
 
 form.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -124,7 +47,7 @@ form.addEventListener('submit', function(event) {
         },
         confirmParams: {
             // Return URL where the customer should be redirected after the PaymentIntent is confirmed.
-            return_url: 'http://127.0.0.1:8000/pay/payment_success',
+            return_url: 'http://127.0.0.1:8000/pay/payment_success/'+payment_id,
         }
     }).then(function(result) {
         if (result.error) {
@@ -133,7 +56,7 @@ form.addEventListener('submit', function(event) {
             errorElement.textContent = result.error.message;
         } else {
             // Payment successful, redirect or show success message
-            window.location.href = 'successful_payment_page';
+            window.location.href = '/pay/payment_success/'+payment_id+'/';
         }
     });
 });
@@ -141,56 +64,3 @@ form.addEventListener('submit', function(event) {
     </script>
 </body>
 </html> 
-
-
-{% comment %} <!-- checkout.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout</title>
-    <script src="https://js.stripe.com/v3/"></script>
-</head>
-<body>
-    <form id="payment-form">
-        <div id="payment-element">
-            <!-- Elements will create form elements here -->
-        </div>
-        <button id="submit">Submit</button>
-        <div id="error-message">
-            <!-- Display error message to your customers here -->
-        </div>
-    </form>
-
-    <script>
-        var clientSecret = "{{ client_secret }}";
-
-        // Set up Stripe.js and Elements to use in checkout form
-        var stripe = Stripe('pk_test_51OjyDiSI7Oo1z2hJNqq1ICMbGpMrUepiPQKiQkcvXIAaxkBenvVMKH87aHVrKa4bWXpPjSNZo5ws0FRzZv9JOdHk00A0hOoVRN');
-        var elements = stripe.elements();
-        var paymentElement = elements.create('payment');
-        paymentElement.mount('#payment-element');
-
-        var form = document.getElementById('payment-form');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            stripe.confirmPayment(clientSecret, {
-                payment_method: {
-                    payment_method: 'card',
-                    card: elements.getElement('payment')
-                }
-            }).then(function(result) {
-                if (result.error) {
-                    // Display error message to customer
-                    var errorElement = document.getElementById('error-message');
-                    errorElement.textContent = result.error.message;
-                } else {
-                    // Payment successful, redirect or show success message
-                    window.location.href = 'successful_payment_page';
-                }
-            });
-        });
-    </script>
-</body>
-</html> {% endcomment %}

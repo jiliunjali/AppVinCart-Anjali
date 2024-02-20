@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Checkout Summary</h1>
+    <br>
+    <p>Payment for user: {{ user.first_name }} {{ user.last_name }}</p>
+    <ul>
+        {% for order in orders %}
+            {% for product in order.product.all %}
+                {{ product.name }}  - ${{ product.price }}<br>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </ul>
+    <p>Total Amount: ${{ total_amount }}</p>
+    
+    <!-- Display payment method form -->
+    <form id="payment-form" method="post" action="{% url 'checkout' user_id=request.user.id %}">
+        {% csrf_token %}
+        <div id="payment-element">
+            <!-- Elements will create form elements here -->
+        </div>
+        <input type="hidden" id="paymentMethodId" name="paymentMethodId">
+        <input type="text" id="shippingName" name="shippingName" placeholder="Enter Shipping Name" required>
+        <input type="text" id="shippingAddress" name="shippingAddress" placeholder="Enter Shipping Address" required>
+        <input type="text" id="shippingCity" name="shippingCity" placeholder="Enter shippingCity" required>
+        <input type="text" id="shippingCountry" name="shippingCountry" placeholder="Enter shippingCountry" required>
+        <input type="text" id="shippingState" name="shippingState" placeholder="Enter shippingState" required>
+
+
+        <button id="submit-payment">Proceed to Payment</button>
+        <div id="error-message">
+            <!-- Display error message to your customers here -->
+        </div>
+    </form>
+
+    <script>
+        // Set up Stripe.js and Elements to use in checkout form
+        var stripe = Stripe('pk_test_51OjyDiSI7Oo1z2hJNqq1ICMbGpMrUepiPQKiQkcvXIAaxkBenvVMKH87aHVrKa4bWXpPjSNZo5ws0FRzZv9JOdHk00A0hOoVRN');
+        var elements = stripe.elements();
+        var paymentElement = elements.create('card');
+        paymentElement.mount('#payment-element');
+        var form = document.getElementById('payment-form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Capture payment method details
+            stripe.createPaymentMethod({
+                type: 'card',
+                card: paymentElement,
+                billing_details: {
+                    name: document.getElementById('shippingName').value,
+                    address: {
+                        line1: document.getElementById('shippingAddress').value,
+                        city: document.getElementById('shippingCity').value || 'City Default',
+                        country: document.getElementById('shippingCountry').value || 'Country Default',
+                        state: document.getElementById('shippingState').value || 'State Default'
+                    }
+                }
+            }).then(function(result) {
+                if (result.error) {
+                    // Display error message to customer
+                    var errorElement = document.getElementById('error-message');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Payment method captured successfully, set paymentMethodId and submit form
+                    var paymentMethodId = result.paymentMethod.id;
+                    document.getElementById('paymentMethodId').value = paymentMethodId;
+                    form.submit();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
